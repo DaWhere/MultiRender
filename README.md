@@ -101,3 +101,10 @@ into the selected language. Translations live in `i18n/*.py` (keys are the Engli
   (or `…\bin\qgis_process-qgis-ltr.bat`), Linux `/usr/bin/qgis_process`,
   macOS `/Applications/QGIS-LTR.app/Contents/MacOS/bin/qgis_process`.
 - Error details: hover over the row status or see the log at the bottom of the window.
+
+## Links
+
+- Homepage: https://github.com/DaWhere/MultiRender
+- Bug reports and feature requests: https://github.com/DaWhere/MultiRender
+- Source code: https://github.com/DaWhere/MultiRender
+- Author: Dawid Matusiak – [LinkedIn](https://www.linkedin.com/in/dawid-matusiak-b1666421b)

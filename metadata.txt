@@ -1,0 +1,19 @@
+[general]
+name=MultiRender
+qgisMinimumVersion=3.40
+qgisMaximumVersion=4.99
+supportsQt6=True
+description=Parallel rendering of QGIS print layouts and atlases (PNG, JPG, TIFF, BMP, PDF, SVG).
+about=MultiRender takes the layouts from the Layout Manager and renders them in parallel, each in its own qgis_process process, using all CPU cores without blocking QGIS. Atlases and multi-page layouts can be split into parts rendered at the same time. Before rendering, remote and database layers are fetched once into a local cache shared by all prints. For each layout you choose the format, DPI, page range and output folder; settings are remembered and the results can be packed into a ZIP archive. A built-in performance analysis shows which layers and stages slow rendering down. Interface languages: English, Polish, German, Spanish, French.
+version=2026.1.0
+author=Dawid Matusiak
+email=dawidmatusiak25@gmail.com
+tags=layout,print,export,render,batch,parallel,atlas,pdf,png,multi,performance,profiling
+category=Plugins
+icon=icon.svg
+experimental=False
+deprecated=False
+homepage=https://github.com/
+repository=https://github.com/
+tracker=https://github.com/
+changelog=2026.1.0 - first release

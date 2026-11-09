@@ -19,21 +19,30 @@ Interface languages: **English** (default), Polish, German, Spanish, French – 
    Layouts without saved settings get the values from *Settings → New projects*.
 3. **Duplicate** a row to get the same map in another format; bulk edit applies format/DPI/processes/folder
    to the selected rows.
-4. **Editor** (or double-click the name) opens the layout designer, **Copy layout** duplicates a layout.
+4. **Add layout** creates a new, empty layout, **Copy layout** copies one (`name (1)`, `name (2)`…),
+   **Editor** (or double-click the name) opens the layout designer, **Remove** deletes the ticked layouts.
 5. Click **Render**. While working the window is locked (only **Stop** is active), a clock shows the time of
    the whole run and at the end a message says “Printed N prints in X s”.
 6. The **Prints** panel collects the results: open, show folder, **Pack to ZIP**.
-7. **Other projects… / From folder…** add layouts from other `.qgs/.qgz` files; lists can be saved as JSON.
+7. **Other projects** adds layouts from other `.qgs/.qgz` files (its arrow: from a whole folder);
+   lists can be saved and loaded as JSON.
+
+Toolbar: Add layout · Copy layout · Duplicate · Select all · Select none · Editor · Remove · Refresh ·
+Other projects · Load list · Save list · Settings.
+
+## Formats
+
+PNG, JPG, TIFF/GeoTIFF, BMP, PDF, **PDF (PNG)** and SVG. *PDF (PNG)* is a PDF in which every page is one
+lossless image at the chosen DPI – lines, polygons and text cannot be selected or edited in a PDF editor.
 
 ## Settings
 
 | Tab | Contents |
 |---|---|
-| General | language, simultaneous renders, default output folder, remembering the settings of each layout |
+| General | language, window size (fit to the screen, or for Full HD / QHD / 4K screens) |
 | New projects | default format, DPI, atlas, processes per layout, “update defaults with the last chosen values”, file names (layout name or template), overwriting |
-| Export | world file, crop, antialiasing, GeoPDF, vector output, single-PDF atlas, text as text/outlines, metadata |
-| Project cache | what to cache, extent filter, cache reuse |
-| Advanced | `qgis_process` path (detect / test), fast project loading, stop on missing layers |
+| Rendering | render folder and remembering the settings of each layout; export (world file, crop, antialiasing, GeoPDF, vector output, single-PDF atlas, text as text/outlines, metadata, fast project loading, stop on missing layers); project cache (what to cache, extent filter, unused layers, reuse) |
+| Advanced | simultaneous renders (up to 10), `qgis_process` path (detect / test) |
 
 ## File names
 
@@ -49,20 +58,10 @@ The same name from several projects → `al-jerozolimskie (2)`. Alternatively a 
   1–30, 31–60, 61–90, 91–120 at the same time). Works for atlases (all formats) and multi-page
   PNG/JPG/TIFF/BMP; PDF/SVG without an atlas is exported as a whole.
 
-## Performance analysis
+## Run summary
 
-Select one layout and click **Analyze performance** (also in the right-click menu). A worker process renders
-the layout without saving anything (atlas: the first sheet) and measures:
-
-- project loading,
-- every layer separately – reading the data and drawing (vector layers also show the feature count),
-- labels, other layout items (legend, tables, HTML frames, pictures), writing the file,
-- peak memory of the process compared with the computer's memory.
-
-The report lists the stages and layers from the slowest, with practical tips (cache, spatial index,
-overviews, symbology, labelling, number of processes) and can be copied as text.
-After every normal run the log also shows how the time in the processes was split between project
-loading and rendering, and the peak memory per process.
+After every run the log shows how the time in the processes was split between project loading and
+rendering, and the peak memory per process.
 
 ## Project cache
 
@@ -78,10 +77,9 @@ optionally only within the extent of the layout maps. All parallel prints read f
 - Layers referenced by expressions (`aggregate`, `get_feature`, …) are copied without the extent filter;
   layers joined to used layers are copied as well.
 - Optionally, remote layers **not used** by the printed layouts are replaced by empty local copies, so the
-  rendering processes do not wait for their connections (*Settings → Project cache*).
+  rendering processes do not wait for their connections (*Settings → Rendering → Project cache*).
 - The cache is removed after the run (unless reuse is enabled); local layers and WMS/XYZ basemaps are not copied.
-- If layers are unavailable in the rendering processes, the log, the final message and the performance report
-  say so – such prints may be missing data.
+- If layers are unavailable in the rendering processes, the log and the final message say so – such prints may be missing data.
 
 ## How it works
 

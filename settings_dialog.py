@@ -1,4 +1,4 @@
-"""Plugin settings window (tabs: General, New projects, Export, Project cache, Advanced)."""
+"""Plugin settings window (tabs: General, New projects, Render, Advanced)."""
 
 import os
 
@@ -15,6 +15,7 @@ from qgis.PyQt.QtWidgets import (
     QLabel,
     QLineEdit,
     QPushButton,
+    QScrollArea,
     QSpinBox,
     QTabWidget,
     QVBoxLayout,
@@ -50,10 +51,17 @@ def _path_row(edit, slot):
     return w, lay
 
 
-def _tab(parent_tabs, title):
+def _tab(parent_tabs, title, scroll=False):
     page = QWidget()
     lay = QVBoxLayout(page)
-    parent_tabs.addTab(page, title)
+    if scroll:  # long tab – scrolls on small screens
+        area = QScrollArea()
+        area.setWidgetResizable(True)
+        area.setFrameShape(QScrollArea.Shape.NoFrame)
+        area.setWidget(page)
+        parent_tabs.addTab(area, title)
+    else:
+        parent_tabs.addTab(page, title)
     return lay
 
 
@@ -62,7 +70,8 @@ class SettingsDialog(QDialog):
         super().__init__(parent)
         self.language_changed = False
         self.setWindowTitle(tr("MultiRender – settings"))
-        self.setMinimumWidth(620)
+        self.setMinimumWidth(640)
+        self.resize(700, 640)
         outer = QVBoxLayout(self)
         tabs = QTabWidget()
         outer.addWidget(tabs, 1)
@@ -75,21 +84,15 @@ class SettingsDialog(QDialog):
         for code, name in LANGUAGES:
             self.language.addItem(name, code)
         f.addRow(tr("Language:"), self.language)
-        self.max_parallel = QSpinBox()
-        self.max_parallel.setRange(1, S.MAX_PARALLEL)
-        self.max_parallel.setToolTip(tr("How many qgis_process processes run at the same time. CPU cores: {cores}.",
-                                        cores=os.cpu_count() or "?"))
-        f.addRow(tr("Simultaneous renders:"), self.max_parallel)
-        self.output_dir = QLineEdit()
-        row, _ = _path_row(self.output_dir, self._pick_dir)
-        f.addRow(tr("Default output folder:"), row)
-        self.remember = QCheckBox(tr("Remember the settings of each layout"))
-        self.remember.setToolTip(tr("Format, DPI, pages, processes and folder of every layout come back "
-                                    "after reopening the project or QGIS."))
-        f.addRow("", self.remember)
-        self.forget = QPushButton(tr("Clear remembered layout settings"))
-        self.forget.clicked.connect(self._forget_rows)
-        f.addRow("", self.forget)
+        self.window_size = QComboBox()
+        self.window_size.addItem(tr("Fit to the screen (automatic)"), "auto")
+        self.window_size.addItem(tr("Full HD screen (1920×1080)"), "1080p")
+        self.window_size.addItem(tr("QHD screen (2560×1440)"), "1440p")
+        self.window_size.addItem(tr("4K screen (3840×2160)"), "2160p")
+        self.window_size.setToolTip(tr("Size of the MultiRender window. “Automatic” takes 80% of the screen; "
+                                       "the other options suit a given screen resolution and never exceed "
+                                       "the screen."))
+        f.addRow(tr("Window size:"), self.window_size)
         root.addStretch(1)
 
         # --- New projects (defaults for layouts without saved settings)
@@ -117,6 +120,9 @@ class SettingsDialog(QDialog):
         self.follow_last.setToolTip(tr("Folder, DPI, format and processes chosen for a layout become "
                                        "the defaults for the next new projects."))
         f.addRow("", self.follow_last)
+        self.open_new_layout = QCheckBox(tr("Open a new layout in the layout designer (“Add layout”)"))
+        self.open_new_layout.setToolTip(tr("Off = the new layout is only added to the list and the Layout Manager."))
+        f.addRow("", self.open_new_layout)
 
         g = QGroupBox(tr("File names"))
         gf = QFormLayout(g)
@@ -138,10 +144,24 @@ class SettingsDialog(QDialog):
         root.addWidget(g)
         root.addStretch(1)
 
-        # --- Export
-        root = _tab(tabs, tr("Export"))
-        f = QFormLayout()
-        root.addLayout(f)
+        # --- Render: output folder, export options, project cache
+        root = _tab(tabs, tr("Rendering"), scroll=True)
+        g = QGroupBox(tr("Output"))
+        f = QFormLayout(g)
+        self.output_dir = QLineEdit()
+        row, _ = _path_row(self.output_dir, self._pick_dir)
+        f.addRow(tr("Render folder:"), row)
+        self.remember = QCheckBox(tr("Remember the settings of each layout"))
+        self.remember.setToolTip(tr("Format, DPI, pages, processes and folder of every layout come back "
+                                    "after reopening the project or QGIS."))
+        f.addRow("", self.remember)
+        self.forget = QPushButton(tr("Clear remembered layout settings"))
+        self.forget.clicked.connect(self._forget_rows)
+        f.addRow("", self.forget)
+        root.addWidget(g)
+
+        g = QGroupBox(tr("Export"))
+        f = QFormLayout(g)
         self.world_file = QCheckBox(tr("Create a georeferencing file (world file)"))
         f.addRow(tr("Raster:"), self.world_file)
         self.crop = QCheckBox(tr("Crop to content"))
@@ -151,6 +171,7 @@ class SettingsDialog(QDialog):
         self.pdf_georef = QCheckBox(tr("Include georeference (GeoPDF)"))
         f.addRow("PDF:", self.pdf_georef)
         self.pdf_vector = QCheckBox(tr("Force vector output"))
+        self.pdf_vector.setToolTip(tr("Does not apply to “PDF (PNG)”, which is always one image per page."))
         f.addRow("", self.pdf_vector)
         self.atlas_single = QCheckBox(tr("Atlas as a single PDF file"))
         f.addRow("", self.atlas_single)
@@ -160,12 +181,16 @@ class SettingsDialog(QDialog):
         f.addRow(tr("Text (PDF/SVG):"), self.text_render)
         self.metadata = QCheckBox(tr("Save project metadata in the files"))
         f.addRow("", self.metadata)
-        root.addStretch(1)
+        self.trust = QCheckBox(tr("Fast project loading (trust layer metadata)"))
+        f.addRow(tr("Processes:"), self.trust)
+        self.fail_invalid = QCheckBox(tr("Stop the job when layers are missing"))
+        f.addRow("", self.fail_invalid)
+        root.addWidget(g)
 
-        # --- Project cache
-        root = _tab(tabs, tr("Project cache"))
+        g = QGroupBox(tr("Project cache"))
+        gl = QVBoxLayout(g)
         f = QFormLayout()
-        root.addLayout(f)
+        gl.addLayout(f)
         self.cache_mode = QComboBox()
         self.cache_mode.addItem(tr("Remote and database layers (PostGIS, WFS, Oracle…)"), "remote")
         self.cache_mode.addItem(tr("All vector layers"), "all_vector")
@@ -180,16 +205,22 @@ class SettingsDialog(QDialog):
         self.cache_reuse = QCheckBox(tr("Reuse the cache if the project has not changed"))
         self.cache_reuse.setToolTip(tr("Off = the data is fetched fresh for every run"))
         f.addRow("", self.cache_reuse)
-        root.addWidget(_hint(tr("For the current project the cache is built inside this QGIS session, from the "
-                                "layers you are already connected to, into a local GeoPackage on disk (system "
-                                "temporary folder). All parallel prints read from that copy, so they need no "
-                                "database logins. WMS/XYZ basemaps use the shared QGIS network cache.")))
+        gl.addWidget(_hint(tr("For the current project the cache is built inside this QGIS session, from the "
+                              "layers you are already connected to, into a local GeoPackage on disk (system "
+                              "temporary folder). All parallel prints read from that copy, so they need no "
+                              "database logins. WMS/XYZ basemaps use the shared QGIS network cache.")))
+        root.addWidget(g)
         root.addStretch(1)
 
         # --- Advanced
         root = _tab(tabs, tr("Advanced"))
         f = QFormLayout()
         root.addLayout(f)
+        self.max_parallel = QSpinBox()
+        self.max_parallel.setRange(1, S.MAX_PARALLEL)
+        self.max_parallel.setToolTip(tr("How many qgis_process processes run at the same time. CPU cores: {cores}.",
+                                        cores=os.cpu_count() or "?"))
+        f.addRow(tr("Simultaneous renders:"), self.max_parallel)
         self.qgis_process = QLineEdit()
         self.qgis_process.setPlaceholderText(tr("detected automatically"))
         row, lay = _path_row(self.qgis_process, self._pick_qp)
@@ -200,10 +231,6 @@ class SettingsDialog(QDialog):
         b.clicked.connect(self._test_qp)
         lay.addWidget(b)
         f.addRow("qgis_process:", row)
-        self.trust = QCheckBox(tr("Fast project loading (trust layer metadata)"))
-        f.addRow("", self.trust)
-        self.fail_invalid = QCheckBox(tr("Stop the job when layers are missing"))
-        f.addRow("", self.fail_invalid)
         root.addStretch(1)
 
         bb = QDialogButtonBox(
@@ -240,6 +267,7 @@ class SettingsDialog(QDialog):
 
         return {
             "language": combo(self.language),
+            "window_size": combo(self.window_size),
             "max_parallel": spin(self.max_parallel),
             "output_dir": text(self.output_dir),
             "remember": check(self.remember),
@@ -248,6 +276,7 @@ class SettingsDialog(QDialog):
             "use_atlas": check(self.use_atlas),
             "parts": spin(self.parts),
             "defaults_follow_last": check(self.follow_last),
+            "open_new_layout": check(self.open_new_layout),
             "naming": combo(self.naming),
             "filename_template": text(self.template),
             "overwrite": check(self.overwrite),

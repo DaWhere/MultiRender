@@ -10,9 +10,8 @@ Every call is a separate process, so the project is read into
 QgsProject.instance() – there is no conflict with other jobs, and some layout
 items (e.g. expressions) refer to the singleton anyway.
 
-With --MODE=profile nothing is exported: the worker measures where the time
-goes (project loading, every layer separately – data and drawing –, labels,
-other layout items, writing the file, peak memory) and returns the numbers.
+Format “pdf_raster” is a PDF with the whole page rasterized (lossless, like
+PNG): the map cannot be selected or edited in a PDF editor.
 
 The result is written to a JSON file (RESULT_FILE); progress and messages go to
 stdout as "@@MR:<kind>:<value>" lines. Messages are codes with arguments
@@ -22,19 +21,11 @@ stdout as "@@MR:<kind>:<value>" lines. Messages are codes with arguments
 import json
 import os
 import sys
-import tempfile
 import time
 import traceback
 
 from qgis.core import (
     Qgis,
-    QgsCoordinateTransform,
-    QgsFeatureRequest,
-    QgsLayoutItemMap,
-    QgsLayoutMeasurement,
-    QgsMapLayer,
-    QgsMapRendererSequentialJob,
-    QgsMapSettings,
     QgsFeedback,
     QgsLayoutExporter,
     QgsProcessingAlgorithm,
@@ -46,7 +37,6 @@ from qgis.core import (
     QgsProcessingParameterString,
     QgsProject,
 )
-from qgis.PyQt.QtCore import QSize, QSizeF
 
 MARK = "@@MR:"
 RASTER_FORMATS = {"png": ".png", "jpg": ".jpg", "tif": ".tif", "bmp": ".bmp"}
@@ -88,9 +78,6 @@ def _enum(owner, scoped, name):
 
 
 SUCCESS = _enum(QgsLayoutExporter, "ExportResult", "Success")
-_LAYER_TYPE = getattr(Qgis, "LayerType", None)
-VECTOR_LAYER = _LAYER_TYPE.Vector if _LAYER_TYPE is not None else QgsMapLayer.VectorLayer
-RASTER_LAYER = _LAYER_TYPE.Raster if _LAYER_TYPE is not None else QgsMapLayer.RasterLayer
 EXPORT_ERRORS = {
     "Canceled": "export_canceled",
     "MemoryError": "export_memory",
@@ -127,29 +114,6 @@ def peak_memory():
 
         peak = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
         return int(peak if sys.platform == "darwin" else peak * 1024)
-    except Exception:  # noqa: BLE001
-        return 0
-
-
-def total_memory():
-    """Physical memory of the computer in bytes (0 = unknown)."""
-    try:
-        if sys.platform.startswith("win"):
-            import ctypes
-
-            class Status(ctypes.Structure):
-                _fields_ = [("dwLength", ctypes.c_ulong), ("dwMemoryLoad", ctypes.c_ulong)] + [
-                    (n, ctypes.c_ulonglong) for n in (
-                        "ullTotalPhys", "ullAvailPhys", "ullTotalPageFile", "ullAvailPageFile",
-                        "ullTotalVirtual", "ullAvailVirtual", "ullAvailExtendedVirtual")]
-
-            status = Status()
-            status.dwLength = ctypes.sizeof(Status)
-            kernel32 = ctypes.WinDLL("kernel32")
-            kernel32.GlobalMemoryStatusEx.argtypes = [ctypes.POINTER(Status)]
-            kernel32.GlobalMemoryStatusEx.restype = ctypes.c_int
-            return int(status.ullTotalPhys) if kernel32.GlobalMemoryStatusEx(ctypes.byref(status)) else 0
-        return int(os.sysconf("SC_PAGE_SIZE") * os.sysconf("SC_PHYS_PAGES"))
     except Exception:  # noqa: BLE001
         return 0
 
@@ -197,8 +161,6 @@ class MultiRenderLayoutAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(QgsProcessingParameterString("PAGES", "Pages (e.g. 2-5,8)", defaultValue="", optional=True))
         self.addParameter(QgsProcessingParameterNumber("PART", "Part", defaultValue=1, minValue=1))
         self.addParameter(QgsProcessingParameterNumber("PARTS", "Number of parts", defaultValue=1, minValue=1))
-        self.addParameter(QgsProcessingParameterString("MODE", "Mode (render | profile)", defaultValue="render",
-                                                       optional=True))
         self.addParameter(QgsProcessingParameterString("RESULT_FILE", "Result file (JSON)", defaultValue="",
                                                        optional=True))
         self.addOutput(QgsProcessingOutputString("OUTPUT_FILES", "Created files"))
@@ -254,7 +216,8 @@ class MultiRenderLayoutAlgorithm(QgsProcessingAlgorithm):
         part = self.parameterAsInt(parameters, "PART", context) or 1
         parts = self.parameterAsInt(parameters, "PARTS", context) or 1
         paged = bool(pages_spec) or parts > 1
-        profile = (self.parameterAsString(parameters, "MODE", context) or "render").strip() == "profile"
+        if fmt == "pdf_raster":  # PDF made of one image per page – nothing to select in it
+            fmt, opts["pdf_rasterize"] = "pdf", True
 
         if fmt not in RASTER_FORMATS and fmt not in ("pdf", "svg"):
             raise WorkerError("bad_format", fmt=fmt)
@@ -274,9 +237,6 @@ class MultiRenderLayoutAlgorithm(QgsProcessingAlgorithm):
 
         atlas = layout.atlas()
         atlas_on = bool(use_atlas and atlas is not None and atlas.enabled())
-        if profile:
-            result["profile"] = self._profile(project, layout, fmt, dpi, atlas_on, opts)
-            return []
         t_export = time.perf_counter()
         self._mark("stage", "stage_export")
 
@@ -398,8 +358,14 @@ class MultiRenderLayoutAlgorithm(QgsProcessingAlgorithm):
         else:
             if fmt == "pdf":
                 s = QgsLayoutExporter.PdfExportSettings()
-                s.rasterizeWholeImage = False
-                s.forceVectorOutput = bool(opts.get("pdf_force_vector", False))
+                raster = bool(opts.get("pdf_rasterize", False))
+                s.rasterizeWholeImage = raster
+                s.forceVectorOutput = False if raster else bool(opts.get("pdf_force_vector", False))
+                if raster:  # the page image is kept without JPEG artefacts
+                    try:
+                        s.flags = s.flags | _enum(Qgis, "LayoutRenderFlag", "LosslessImageRendering")
+                    except Exception:  # noqa: BLE001
+                        pass
                 s.appendGeoreference = bool(opts.get("pdf_georeference", True))
                 ext = ".pdf"
             else:
@@ -523,145 +489,3 @@ class MultiRenderLayoutAlgorithm(QgsProcessingAlgorithm):
             return files
         finally:
             atlas.endRender()
-
-    # ============================================================ profiling
-    def _profile(self, project, layout, fmt, dpi, atlas_on, opts):
-        self._mark("stage", "stage_profile")
-        """Measures where the time goes. Every measurement is a separate render, so the
-        numbers are approximate, but they show clearly which part is the slowest."""
-        prof = {"load": self._timing.get("load", 0.0), "labels": 0.0, "page": 0.0, "other": 0.0, "save": 0.0,
-                "maps": 0, "pages": layout.pageCollection().pageCount(), "atlas_sheet": 0,
-                "total_mem": total_memory(), "layers": {},
-                "invalid": [lyr.name() for lyr in project.mapLayers().values() if not lyr.isValid()]}
-        atlas = layout.atlas()
-        if atlas_on:
-            if not atlas.beginRender() or atlas.count() == 0:
-                raise WorkerError("atlas_prepare")
-            atlas.seekTo(0)  # the first sheet is representative for the whole atlas
-            prof["atlas_sheet"] = 1
-        try:
-            maps = [item for item in layout.items() if isinstance(item, QgsLayoutItemMap)]
-            maps_full = 0.0
-            for i, item in enumerate(maps):
-                ms = self._item_map_settings(layout, item, dpi)
-                if ms is None:
-                    continue
-                prof["maps"] += 1
-                full = self._render_time(ms)
-                no_labels = QgsMapSettings(ms)
-                self._set_labels(no_labels, False)
-                without = self._render_time(no_labels)
-                prof["labels"] += max(0.0, full - without)
-                maps_full += full
-                layers = [lyr for lyr in ms.layers() if lyr is not None]
-                for j, layer in enumerate(layers):
-                    self._profile_layer(project, ms, no_labels, layer, prof["layers"])
-                    self._progress(30 + 55 * (i + (j + 1) / max(1, len(layers))) / max(1, len(maps)))
-            self._progress(86)
-
-            exporter = QgsLayoutExporter(layout)
-            t = time.perf_counter()
-            images = [exporter.renderPageToImage(p, QSize(), dpi) for p in range(prof["pages"])]
-            prof["page"] = time.perf_counter() - t
-            prof["other"] = max(0.0, prof["page"] - maps_full)
-            self._progress(93)
-            prof["save"] = self._save_time(layout, fmt, dpi, opts, images, prof["page"])
-        finally:
-            if atlas_on:
-                atlas.endRender()
-        prof["layers"] = sorted(prof["layers"].values(), key=lambda e: e["render"], reverse=True)
-        prof["peak_mem"] = peak_memory()
-        self._progress(100)
-        return prof
-
-    @staticmethod
-    def _item_map_settings(layout, item, dpi):
-        """Map settings of a layout map at the export resolution (size in pixels)."""
-        try:
-            rect = item.rect()
-            try:
-                mm = _enum(Qgis, "LayoutUnit", "Millimeters")
-                conv = layout.renderContext().measurementConverter()
-                w = conv.convert(QgsLayoutMeasurement(rect.width(), layout.units()), mm).length()
-                h = conv.convert(QgsLayoutMeasurement(rect.height(), layout.units()), mm).length()
-            except Exception:  # noqa: BLE001 – layouts are in millimetres by default
-                w, h = rect.width(), rect.height()
-            size = QSizeF(max(1.0, w / 25.4 * dpi), max(1.0, h / 25.4 * dpi))
-            return item.mapSettings(item.extent(), size, dpi, True)
-        except Exception:  # noqa: BLE001
-            return None
-
-    @staticmethod
-    def _set_labels(ms, on):
-        flag = getattr(getattr(Qgis, "MapSettingsFlag", None), "DrawLabeling", None)
-        if flag is None:
-            flag = QgsMapSettings.DrawLabeling
-        ms.setFlag(flag, on)
-
-    @staticmethod
-    def _render_time(ms):
-        job = QgsMapRendererSequentialJob(ms)
-        t = time.perf_counter()
-        job.start()
-        job.waitForFinished()
-        return time.perf_counter() - t
-
-    def _profile_layer(self, project, ms, no_labels, layer, layers):
-        layer_type = layer.type()
-        vector, raster = layer_type == VECTOR_LAYER, layer_type == RASTER_LAYER
-        entry = layers.setdefault(layer.id(), {
-            "name": layer.name(), "provider": layer.providerType(),
-            "kind": "vector" if vector else "raster" if raster else "other",
-            "remote": self._is_remote(layer), "render": 0.0, "fetch": 0.0, "features": 0, "hidden": False,
-        })
-        single = QgsMapSettings(no_labels)
-        single.setLayers([layer])
-        entry["render"] += self._render_time(single)  # data + drawing (cold)
-        if not vector:
-            return
-        if layer.hasScaleBasedVisibility() and not layer.isInScaleRange(ms.scale()):
-            entry["hidden"] = True  # not drawn at this scale – no data is read
-            return
-        request = QgsFeatureRequest()
-        try:
-            ct = QgsCoordinateTransform(ms.destinationCrs(), layer.crs(), project.transformContext())
-            request.setFilterRect(ct.transformBoundingBox(ms.visibleExtent()))
-        except Exception:  # noqa: BLE001
-            pass
-        t, n = time.perf_counter(), 0
-        for _feature in layer.getFeatures(request):
-            n += 1
-        entry["fetch"] += time.perf_counter() - t  # data only (warm connection)
-        entry["features"] += n
-
-    @staticmethod
-    def _is_remote(layer):
-        remote = {"postgres", "wfs", "oapif", "oracle", "mssql", "hana", "arcgisfeatureserver", "wms", "wcs",
-                  "arcgismapserver", "xyz", "vectortile"}
-        source = layer.source().lower()
-        return layer.providerType() in remote or source.startswith(("http://", "https://", "/vsicurl")) or \
-            "url=" in source
-
-    def _save_time(self, layout, fmt, dpi, opts, images, page_time):
-        """Time of writing the result: encoding the image (raster) or the whole PDF/SVG export minus drawing."""
-        tmp = tempfile.mkdtemp(prefix="multirender_profile_")
-        try:
-            if fmt in RASTER_FORMATS:
-                t = time.perf_counter()
-                for i, image in enumerate(images):
-                    image.save(os.path.join(tmp, f"p{i}{RASTER_FORMATS[fmt]}"))
-                return time.perf_counter() - t
-            ext, settings = self._export_settings(fmt, dpi, opts)
-            t = time.perf_counter()
-            self._export_one(QgsLayoutExporter(layout), fmt, os.path.join(tmp, "p" + ext), settings)
-            return max(0.0, time.perf_counter() - t - page_time)
-        finally:
-            for f in os.listdir(tmp):
-                try:
-                    os.remove(os.path.join(tmp, f))
-                except OSError:
-                    pass
-            try:
-                os.rmdir(tmp)
-            except OSError:
-                pass

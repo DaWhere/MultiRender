@@ -12,7 +12,7 @@ from collections import deque
 from qgis.PyQt.QtCore import QObject, QProcess, QProcessEnvironment, pyqtSignal
 
 from .i18n import message, tr
-from .settings import MAX_PARALLEL
+from .settings import FORMAT_LABEL, MAX_PARALLEL
 from .qgis_process_locator import IS_WIN, NO_WINDOW, build_command
 
 MARK = "@@MR:"
@@ -79,9 +79,8 @@ class BaseJob:
 
 class RenderJob(BaseJob):
     def __init__(self, project_path, layout, fmt, dpi, atlas, output_base, options, script="",
-                 pages="", part=1, parts=1, mode="render"):
+                 pages="", part=1, parts=1):
         super().__init__(project_path)
-        self.mode = mode  # "render" | "profile"
         self.pages = pages
         self.part = int(part)
         self.parts = int(parts)
@@ -99,7 +98,7 @@ class RenderJob(BaseJob):
         extra = ", " + tr("pages {pages}", pages=self.pages) if self.pages else ""
         piece = " – " + tr("part {part}/{parts}", part=self.part, parts=self.parts) if self.parts > 1 else ""
         return (f"{os.path.basename(self.source_project)} / {self.layout} "
-                f"[{self.fmt.upper()}, {self.dpi} dpi{extra}]{piece}")
+                f"[{FORMAT_LABEL.get(self.fmt, self.fmt.upper())}, {self.dpi} dpi{extra}]{piece}")
 
     def arguments(self):
         return [
@@ -114,7 +113,6 @@ class RenderJob(BaseJob):
             f"--PAGES={self.pages}",
             f"--PART={self.part}",
             f"--PARTS={self.parts}",
-            f"--MODE={self.mode}",
             f"--OPTIONS={json.dumps(self.options)}",
             f"--RESULT_FILE={self.result_file}",
         ]

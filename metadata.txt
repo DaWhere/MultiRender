@@ -3,13 +3,13 @@ name=MultiRender
 qgisMinimumVersion=3.40
 qgisMaximumVersion=4.99
 supportsQt6=True
-description=Parallel rendering of QGIS print layouts and atlases (PNG, JPG, TIFF, BMP, PDF, SVG).
-about=MultiRender takes the layouts from the Layout Manager and renders them in parallel, each in its own qgis_process process, using all CPU cores without blocking QGIS. Atlases and multi-page layouts can be split into parts rendered at the same time. Before rendering, remote and database layers are fetched once into a local cache shared by all prints. For each layout you choose the format, DPI, page range and output folder; settings are remembered and the results can be packed into a ZIP archive. A built-in performance analysis shows which layers and stages slow rendering down. Interface languages: English, Polish, German, Spanish, French.
+description=Advanced print layout manager with parallel rendering of layouts and atlases (PNG, JPG, TIFF, BMP, PDF, PDF (PNG), SVG).
+about=MultiRender takes the layouts from the Layout Manager and renders them in parallel, each in its own qgis_process process, using all CPU cores without blocking QGIS. Atlases and multi-page layouts can be split into parts rendered at the same time. Before rendering, remote and database layers are fetched once into a local cache shared by all prints. For each layout you choose the format, DPI, page range and output folder; settings are remembered and the results can be packed into a ZIP archive. Layouts can be added, copied, edited and deleted from the same window. Interface languages: English, Polish, German, Spanish, French.
 	Author: Dawid Matusiak – https://www.linkedin.com/in/dawid-matusiak-b1666421b
-version=2026.1.0
+version=2026.1.1
 author=Dawid Matusiak
 email=dawidmatusiak25@gmail.com
-tags=layout,print,export,render,batch,parallel,atlas,pdf,png,multi,performance,profiling
+tags=layout,print,export,render,batch,parallel,atlas,pdf,png,multi,layout manager
 category=Plugins
 icon=icon.svg
 experimental=False
@@ -17,4 +17,14 @@ deprecated=False
 homepage=https://github.com/DaWhere/MultiRender
 repository=https://github.com/DaWhere/MultiRender
 tracker=https://github.com/DaWhere/MultiRender
-changelog=2026.1.0 - first release
+changelog=2026.1.1
+	- Interface: new toolbar order (Add layout, Copy layout, Duplicate, Select all, Select none, Editor, Remove, Refresh | Other projects, Load list, Save list, Settings)
+	- Interface: new "Add layout" button creates an empty layout in the Layout Manager
+	- Interface: "From folder" moved to the arrow menu of "Other projects"; "Layout Manager" button removed
+	- Interface: "Analyze performance" removed (a short run summary stays in the log)
+	- Format: new "PDF (PNG)" - PDF with every page as one lossless image, nothing can be selected or edited
+	- Settings: four tabs - General, New projects, Rendering, Advanced
+	- Settings: General - language and window size (fit to the screen, Full HD, QHD, 4K)
+	- Settings: Rendering - render folder, export options and project cache in one tab
+	- Settings: Advanced - simultaneous renders and qgis_process
+	- Settings: New projects - option to open a new layout in the layout designer

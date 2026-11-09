@@ -1,20 +1,18 @@
 """French translation of MultiRender (generated – keys are the English source texts)."""
 
-T = {'(not visible at this scale)': '(non visible à cette échelle)',
- '(unsaved changes – you will be asked to save)': '(modifications non enregistrées – l’enregistrement vous sera '
+T = {'(unsaved changes – you will be asked to save)': '(modifications non enregistrées – l’enregistrement vous sera '
                                                   'proposé)',
  '({done}/{n} parts)': '({done}/{n} parties)',
- 'Add layouts from other .qgs/.qgz files': 'Ajouter des mises en page d’autres fichiers .qgs/.qgz',
+ '4K screen (3840×2160)': 'Écran 4K (3840×2160)',
+ 'Add layout': 'Ajouter une mise en page',
+ 'Add layouts from other .qgs/.qgz files (arrow: from a whole folder)': 'Ajouter des mises en page d’autres fichiers '
+                                                                        '.qgs/.qgz (flèche : d’un dossier entier)',
  'Add layouts from other projects': 'Ajouter des mises en page d’autres projets',
  'Added {n} layouts from projects in {folder}': '{n} mises en page ajoutées depuis les projets de {folder}',
  'Advanced': 'Avancé',
  'All vector layers': 'Toutes les couches vectorielles',
  'Always as outlines': 'Toujours en contours',
  'Always as text': 'Toujours en texte',
- 'Analysis': 'Analyse',
- 'Analyze performance': 'Analyser les performances',
- 'Analyzing the performance of “{name}” ({fmt}, {dpi} dpi)…': 'Analyse des performances de « {name} » ({fmt}, {dpi} '
-                                                              'ppp)…',
  'Antialiasing': 'Anticrénelage',
  'Apply': 'Appliquer',
  'Archive created ({size}):\n{path}\n\nOpen the folder?': 'Archive créée ({size}) :\n{path}\n\nOuvrir le dossier ?',
@@ -78,7 +76,6 @@ T = {'(not visible at this scale)': '(non visible à cette échelle)',
                                                                    '(enregistrez le projet pour la conserver)',
  'Copy layout': 'Copier la mise en page',
  'Copy layout…': 'Copier la mise en page…',
- 'Copy report': 'Copier le rapport',
  'Copy the selected rows – e.g. the same map in another format': 'Copier les lignes sélectionnées – p. ex. la même '
                                                                  'carte dans un autre format',
  'Copying the layout failed.': 'La copie de la mise en page a échoué.',
@@ -88,14 +85,17 @@ T = {'(not visible at this scale)': '(non visible à cette échelle)',
  'Create a copy of the layout in the project (as in the Layout Manager)': 'Créer une copie de la mise en page dans le '
                                                                           'projet (comme dans le gestionnaire)',
  'Create a georeferencing file (world file)': 'Créer un fichier de géoréférencement (world file)',
+ 'Create a new, empty print layout in the Layout Manager': 'Crée une nouvelle mise en page vide dans le gestionnaire '
+                                                           'de mises en page',
+ 'Created layout “{name}” (save the project to keep it)': 'Mise en page « {name} » créée (enregistrez le projet pour '
+                                                          'la conserver)',
+ 'Creating the layout failed.': 'La création de la mise en page a échoué.',
  'Crop to content': 'Rogner au contenu',
  'Current project': 'Projet actuel',
  'Current project: the cache is built in this QGIS session ({n} layers)': 'Projet actuel : le cache est créé dans '
                                                                           'cette session QGIS ({n} couches)',
  'Current · unsaved': 'Actuel · non enregistré',
  'Current · {name}': 'Actuel · {name}',
- 'Data': 'Données',
- 'Default output folder:': 'Dossier de sortie par défaut :',
  'Delete layouts': 'Supprimer les mises en page',
  'Delete layout…': 'Supprimer la mise en page…',
  'Delete the ticked layouts (the checkbox next to the name) from the Layout Manager of the current project. Rows of other projects are only removed from the list.': 'Supprime '
@@ -160,45 +160,15 @@ T = {'(not visible at this scale)': '(non visible à cette échelle)',
                                                                                    '(enregistrez le projet pour '
                                                                                    'conserver la modification)',
  'Detect': 'Détecter',
+ 'Does not apply to “PDF (PNG)”, which is always one image per page.': 'Ne s’applique pas à « PDF (PNG) », qui est '
+                                                                       'toujours une image par page.',
  'Done · {files} file(s) · {secs} s': 'Terminé · {files} fichier(s) · {secs} s',
  'Double-click to change the folder': 'Double-cliquer pour changer de dossier',
- 'Drawing': 'Dessin',
  'Duplicate': 'Dupliquer',
  'Duplicate row (other format/DPI)': 'Dupliquer la ligne (autre format/PPP)',
  'Editor': 'Éditeur',
  'Errors: {n} (details in the log)': 'Erreurs : {n} (détails dans le journal)',
  'Error{parts} – hover for details': 'Erreur{parts} – survoler pour les détails',
- 'Every value is a separate measurement, so the numbers are approximate. “Data” is the time of reading the features, “Drawing” the rest of the layer time.': 'Chaque '
-                                                                                                                                                             'valeur '
-                                                                                                                                                             'est '
-                                                                                                                                                             'une '
-                                                                                                                                                             'mesure '
-                                                                                                                                                             'distincte, '
-                                                                                                                                                             'les '
-                                                                                                                                                             'chiffres '
-                                                                                                                                                             'sont '
-                                                                                                                                                             'donc '
-                                                                                                                                                             'approximatifs. '
-                                                                                                                                                             '« '
-                                                                                                                                                             'Données '
-                                                                                                                                                             '» '
-                                                                                                                                                             'est '
-                                                                                                                                                             'le '
-                                                                                                                                                             'temps '
-                                                                                                                                                             'de '
-                                                                                                                                                             'lecture '
-                                                                                                                                                             'des '
-                                                                                                                                                             'entités, '
-                                                                                                                                                             '« '
-                                                                                                                                                             'Dessin '
-                                                                                                                                                             '» '
-                                                                                                                                                             'le '
-                                                                                                                                                             'reste '
-                                                                                                                                                             'du '
-                                                                                                                                                             'temps '
-                                                                                                                                                             'de '
-                                                                                                                                                             'la '
-                                                                                                                                                             'couche.',
  'Export': 'Export',
  'Export all atlas sheets': 'Exporter toutes les feuilles de l’atlas',
  'Export canceled': 'Export annulé',
@@ -206,7 +176,6 @@ T = {'(not visible at this scale)': '(non visible à cette échelle)',
  'Export the atlas if the layout has one': 'Exporter l’atlas si la mise en page en a un',
  'Fast project loading (trust layer metadata)': 'Chargement rapide du projet (faire confiance aux métadonnées des '
                                                 'couches)',
- 'Features': 'Entités',
  'File': 'Fichier',
  'File name template': 'Modèle de nom de fichier',
  'File names': 'Noms de fichiers',
@@ -214,6 +183,7 @@ T = {'(not visible at this scale)': '(non visible à cette échelle)',
  'Finished: {ok} OK, {failed} errors, {canceled} canceled in {secs} s{speedup}': 'Terminé : {ok} OK, {failed} erreurs, '
                                                                                  '{canceled} annulées en {secs} '
                                                                                  's{speedup}',
+ 'Fit to the screen (automatic)': 'Adapter à l’écran (automatique)',
  'Folder with projects': 'Dossier de projets',
  'Folder, DPI, format and processes chosen for a layout become the defaults for the next new projects.': 'Le dossier, '
                                                                                                          'la '
@@ -319,6 +289,7 @@ T = {'(not visible at this scale)': '(non visible à cette échelle)',
  'Format:': 'Format :',
  'From folder…': 'Depuis un dossier…',
  'From template': 'Selon le modèle',
+ 'Full HD screen (1920×1080)': 'Écran Full HD (1920×1080)',
  'General': 'Général',
  'How many qgis_process processes run at the same time. CPU cores: {cores}.': 'Nombre de processus qgis_process '
                                                                               'exécutés en même temps. Cœurs CPU : '
@@ -367,212 +338,9 @@ T = {'(not visible at this scale)': '(non visible à cette échelle)',
                                                                           'la mise en page « {name} ».\n'
                                                                           'Exemple : 2-5,8,10-12',
  'Invalid template: {error}': 'Modèle non valide : {error}',
- 'Labels': 'Étiquettes',
- 'Labels take {pct}% of the time. Label fewer layers, use scale-dependent labelling, simpler placement or fewer candidate positions.': 'Les '
-                                                                                                                                       'étiquettes '
-                                                                                                                                       'occupent '
-                                                                                                                                       '{pct} '
-                                                                                                                                       '% '
-                                                                                                                                       'du '
-                                                                                                                                       'temps. '
-                                                                                                                                       'Étiquetez '
-                                                                                                                                       'moins '
-                                                                                                                                       'de '
-                                                                                                                                       'couches, '
-                                                                                                                                       'utilisez '
-                                                                                                                                       'un '
-                                                                                                                                       'étiquetage '
-                                                                                                                                       'dépendant '
-                                                                                                                                       'de '
-                                                                                                                                       'l’échelle, '
-                                                                                                                                       'un '
-                                                                                                                                       'placement '
-                                                                                                                                       'plus '
-                                                                                                                                       'simple '
-                                                                                                                                       'ou '
-                                                                                                                                       'moins '
-                                                                                                                                       'de '
-                                                                                                                                       'positions '
-                                                                                                                                       'candidates.',
  'Language:': 'Langue :',
- 'Layer': 'Couche',
- 'Layer “{name}” ({pct}%): drawing takes {secs} for {n} features. Simplify the symbology (draw effects, many symbol layers, complex markers), use scale-dependent visibility or geometry simplification.': 'Couche '
-                                                                                                                                                                                                           '« '
-                                                                                                                                                                                                           '{name} '
-                                                                                                                                                                                                           '» '
-                                                                                                                                                                                                           '({pct} '
-                                                                                                                                                                                                           '%) '
-                                                                                                                                                                                                           ': '
-                                                                                                                                                                                                           'le '
-                                                                                                                                                                                                           'dessin '
-                                                                                                                                                                                                           'prend '
-                                                                                                                                                                                                           '{secs} '
-                                                                                                                                                                                                           'pour '
-                                                                                                                                                                                                           '{n} '
-                                                                                                                                                                                                           'entités. '
-                                                                                                                                                                                                           'Simplifiez '
-                                                                                                                                                                                                           'la '
-                                                                                                                                                                                                           'symbologie '
-                                                                                                                                                                                                           '(effets '
-                                                                                                                                                                                                           'de '
-                                                                                                                                                                                                           'dessin, '
-                                                                                                                                                                                                           'nombreuses '
-                                                                                                                                                                                                           'couches '
-                                                                                                                                                                                                           'de '
-                                                                                                                                                                                                           'symbole, '
-                                                                                                                                                                                                           'marqueurs '
-                                                                                                                                                                                                           'complexes), '
-                                                                                                                                                                                                           'utilisez '
-                                                                                                                                                                                                           'la '
-                                                                                                                                                                                                           'visibilité '
-                                                                                                                                                                                                           'dépendante '
-                                                                                                                                                                                                           'de '
-                                                                                                                                                                                                           'l’échelle '
-                                                                                                                                                                                                           'ou '
-                                                                                                                                                                                                           'la '
-                                                                                                                                                                                                           'simplification '
-                                                                                                                                                                                                           'des '
-                                                                                                                                                                                                           'géométries.',
- 'Layer “{name}” ({pct}%): most of its time is reading data from {provider}. The project cache fetches it once per run; on the server a spatial index and a smaller set of columns help.': 'Couche '
-                                                                                                                                                                                           '« '
-                                                                                                                                                                                           '{name} '
-                                                                                                                                                                                           '» '
-                                                                                                                                                                                           '({pct} '
-                                                                                                                                                                                           '%) '
-                                                                                                                                                                                           ': '
-                                                                                                                                                                                           'l’essentiel '
-                                                                                                                                                                                           'du '
-                                                                                                                                                                                           'temps '
-                                                                                                                                                                                           'est '
-                                                                                                                                                                                           'la '
-                                                                                                                                                                                           'lecture '
-                                                                                                                                                                                           'des '
-                                                                                                                                                                                           'données '
-                                                                                                                                                                                           'depuis '
-                                                                                                                                                                                           '{provider}. '
-                                                                                                                                                                                           'Le '
-                                                                                                                                                                                           'cache '
-                                                                                                                                                                                           'du '
-                                                                                                                                                                                           'projet '
-                                                                                                                                                                                           'les '
-                                                                                                                                                                                           'récupère '
-                                                                                                                                                                                           'une '
-                                                                                                                                                                                           'fois '
-                                                                                                                                                                                           'par '
-                                                                                                                                                                                           'exécution '
-                                                                                                                                                                                           '; '
-                                                                                                                                                                                           'côté '
-                                                                                                                                                                                           'serveur, '
-                                                                                                                                                                                           'un '
-                                                                                                                                                                                           'index '
-                                                                                                                                                                                           'spatial '
-                                                                                                                                                                                           'et '
-                                                                                                                                                                                           'moins '
-                                                                                                                                                                                           'de '
-                                                                                                                                                                                           'colonnes '
-                                                                                                                                                                                           'aident.',
- 'Layer “{name}” ({pct}%): most of its time is reading data from {provider}. Turn on the project cache so that it is fetched only once per run.': 'Couche '
-                                                                                                                                                  '« '
-                                                                                                                                                  '{name} '
-                                                                                                                                                  '» '
-                                                                                                                                                  '({pct} '
-                                                                                                                                                  '%) '
-                                                                                                                                                  ': '
-                                                                                                                                                  'l’essentiel '
-                                                                                                                                                  'du '
-                                                                                                                                                  'temps '
-                                                                                                                                                  'est '
-                                                                                                                                                  'la '
-                                                                                                                                                  'lecture '
-                                                                                                                                                  'des '
-                                                                                                                                                  'données '
-                                                                                                                                                  'depuis '
-                                                                                                                                                  '{provider}. '
-                                                                                                                                                  'Activez '
-                                                                                                                                                  'le '
-                                                                                                                                                  'cache '
-                                                                                                                                                  'du '
-                                                                                                                                                  'projet '
-                                                                                                                                                  'pour '
-                                                                                                                                                  'ne '
-                                                                                                                                                  'les '
-                                                                                                                                                  'récupérer '
-                                                                                                                                                  'qu’une '
-                                                                                                                                                  'fois '
-                                                                                                                                                  'par '
-                                                                                                                                                  'exécution.',
- 'Layer “{name}” ({pct}%): most of its time is reading the file. Use a format with a spatial index (GeoPackage, FlatGeobuf) or create a spatial index.': 'Couche '
-                                                                                                                                                         '« '
-                                                                                                                                                         '{name} '
-                                                                                                                                                         '» '
-                                                                                                                                                         '({pct} '
-                                                                                                                                                         '%) '
-                                                                                                                                                         ': '
-                                                                                                                                                         'l’essentiel '
-                                                                                                                                                         'du '
-                                                                                                                                                         'temps '
-                                                                                                                                                         'est '
-                                                                                                                                                         'la '
-                                                                                                                                                         'lecture '
-                                                                                                                                                         'du '
-                                                                                                                                                         'fichier. '
-                                                                                                                                                         'Utilisez '
-                                                                                                                                                         'un '
-                                                                                                                                                         'format '
-                                                                                                                                                         'avec '
-                                                                                                                                                         'index '
-                                                                                                                                                         'spatial '
-                                                                                                                                                         '(GeoPackage, '
-                                                                                                                                                         'FlatGeobuf) '
-                                                                                                                                                         'ou '
-                                                                                                                                                         'créez '
-                                                                                                                                                         'un '
-                                                                                                                                                         'index '
-                                                                                                                                                         'spatial.',
- 'Layers (data + drawing)': 'Couches (données + dessin)',
- 'Layers – slowest first': 'Couches – de la plus lente',
  'Layout': 'Mise en page',
- 'Layout Manager': 'Gestionnaire de mises en page',
  'Layout designer': 'Éditeur de mise en page',
- 'Layout items other than maps (legend, attribute tables, HTML frames, pictures) take {pct}% of the time. Check large tables, legends filtered by map content and big embedded pictures.': 'Les '
-                                                                                                                                                                                           'éléments '
-                                                                                                                                                                                           'de '
-                                                                                                                                                                                           'mise '
-                                                                                                                                                                                           'en '
-                                                                                                                                                                                           'page '
-                                                                                                                                                                                           'autres '
-                                                                                                                                                                                           'que '
-                                                                                                                                                                                           'les '
-                                                                                                                                                                                           'cartes '
-                                                                                                                                                                                           '(légende, '
-                                                                                                                                                                                           'tables '
-                                                                                                                                                                                           'attributaires, '
-                                                                                                                                                                                           'cadres '
-                                                                                                                                                                                           'HTML, '
-                                                                                                                                                                                           'images) '
-                                                                                                                                                                                           'occupent '
-                                                                                                                                                                                           '{pct} '
-                                                                                                                                                                                           '% '
-                                                                                                                                                                                           'du '
-                                                                                                                                                                                           'temps. '
-                                                                                                                                                                                           'Vérifiez '
-                                                                                                                                                                                           'les '
-                                                                                                                                                                                           'grands '
-                                                                                                                                                                                           'tableaux, '
-                                                                                                                                                                                           'les '
-                                                                                                                                                                                           'légendes '
-                                                                                                                                                                                           'filtrées '
-                                                                                                                                                                                           'par '
-                                                                                                                                                                                           'le '
-                                                                                                                                                                                           'contenu '
-                                                                                                                                                                                           'de '
-                                                                                                                                                                                           'la '
-                                                                                                                                                                                           'carte '
-                                                                                                                                                                                           'et '
-                                                                                                                                                                                           'les '
-                                                                                                                                                                                           'grandes '
-                                                                                                                                                                                           'images '
-                                                                                                                                                                                           'intégrées.',
  'Layout name (al-jerozolimskie, al-jerozolimskie_1, _2…)': 'Nom de la mise en page (al-jerozolimskie, '
                                                             'al-jerozolimskie_1, _2…)',
  'Layout with an atlas': 'Mise en page avec atlas',
@@ -647,13 +415,6 @@ T = {'(not visible at this scale)': '(non visible à cette échelle)',
                                                                                                                  'projet '
                                                                                                                  '» '
                                                                                                                  'activé.',
- 'Measure where the rendering of the selected layout spends its time': 'Mesurer où le rendu de la mise en page '
-                                                                       'sélectionnée passe son temps',
- 'Measured on the first atlas sheet.': 'Mesuré sur la première feuille de l’atlas.',
- 'Measured time: {secs} · peak memory of the process: {mem}': 'Temps mesuré : {secs} · mémoire maximale du processus : '
-                                                              '{mem}',
- 'Measured with the project cache (built in {secs}, once per run).': 'Mesuré avec le cache du projet (créé en {secs}, '
-                                                                     'une fois par exécution).',
  'MultiRender – ZIP ({n} files)': 'MultiRender – ZIP ({n} fichiers)',
  'MultiRender – parallel map rendering': 'MultiRender – rendu parallèle de cartes',
  'MultiRender – project cache': 'MultiRender – cache du projet',
@@ -663,46 +424,16 @@ T = {'(not visible at this scale)': '(non visible à cette échelle)',
  'New projects': 'Nouveaux projets',
  'No': 'Non',
  'No pages to print in the selected ranges.': 'Aucune page à imprimer dans les plages sélectionnées.',
- 'No single bottleneck – the time is spread over several stages.': 'Pas de goulot d’étranglement unique – le temps se '
-                                                                   'répartit sur plusieurs étapes.',
  'Not in the current project: {names}': 'Absentes du projet actuel : {names}',
- 'Number of processes running at the same time – change it in Settings → General.': 'Nombre de processus exécutés en '
-                                                                                    'même temps – à modifier dans '
-                                                                                    'Paramètres → Général.',
+ 'Number of processes running at the same time – change it in Settings → Advanced.': 'Nombre de processus exécutés en '
+                                                                                     'même temps – modifiable dans '
+                                                                                     'Paramètres → Avancé.',
  'OK': 'OK',
  'Off = the data is fetched fresh for every run': 'Désactivé = les données sont récupérées à chaque exécution',
+ 'Off = the new layout is only added to the list and the Layout Manager.': 'Désactivé = la nouvelle mise en page est '
+                                                                           'seulement ajoutée à la liste et au '
+                                                                           'gestionnaire de mises en page.',
  'Off – every print fetches the data itself': 'Désactivé – chaque impression récupère elle-même les données',
- 'One process needs about {mem}, so {n} parallel processes need about {all} of {total} of memory. Lower the number of parallel processes to avoid swapping.': 'Un '
-                                                                                                                                                              'processus '
-                                                                                                                                                              'a '
-                                                                                                                                                              'besoin '
-                                                                                                                                                              'd’environ '
-                                                                                                                                                              '{mem}, '
-                                                                                                                                                              'donc '
-                                                                                                                                                              '{n} '
-                                                                                                                                                              'processus '
-                                                                                                                                                              'parallèles '
-                                                                                                                                                              'ont '
-                                                                                                                                                              'besoin '
-                                                                                                                                                              'd’environ '
-                                                                                                                                                              '{all} '
-                                                                                                                                                              'sur '
-                                                                                                                                                              '{total} '
-                                                                                                                                                              'de '
-                                                                                                                                                              'mémoire. '
-                                                                                                                                                              'Réduisez '
-                                                                                                                                                              'le '
-                                                                                                                                                              'nombre '
-                                                                                                                                                              'de '
-                                                                                                                                                              'processus '
-                                                                                                                                                              'parallèles '
-                                                                                                                                                              'pour '
-                                                                                                                                                              'éviter '
-                                                                                                                                                              'le '
-                                                                                                                                                              'recours '
-                                                                                                                                                              'au '
-                                                                                                                                                              'fichier '
-                                                                                                                                                              'd’échange.',
  'Only features within the extent of the layout maps (faster, smaller file)': 'Uniquement les entités dans l’emprise '
                                                                               'des cartes de la mise en page (plus '
                                                                               'rapide, fichier plus petit)',
@@ -750,15 +481,17 @@ T = {'(not visible at this scale)': '(non visible à cette échelle)',
                                                                                                                                                                                                               '(2) '
                                                                                                                                                                                                               '».',
  'Open': 'Ouvrir',
+ 'Open a new layout in the layout designer (“Add layout”)': 'Ouvrir la nouvelle mise en page dans le concepteur (« '
+                                                            'Ajouter une mise en page »)',
  'Open folder': 'Ouvrir le dossier',
  'Open in the layout designer': 'Ouvrir dans l’éditeur de mise en page',
  'Open the selected layout in the layout designer (or double-click its name)': 'Ouvrir la mise en page sélectionnée '
                                                                                'dans l’éditeur (ou double-cliquer sur '
                                                                                'son nom)',
  'Open “{name}” in the layout designer?': 'Ouvrir « {name} » dans l’éditeur de mise en page ?',
- 'Other layout items (legend, tables, …)': 'Autres éléments de la mise en page (légende, tableaux, …)',
- 'Other projects…': 'Autres projets…',
+ 'Other projects': 'Autres projets',
  'Out of memory – try a lower DPI': 'Mémoire insuffisante – essayez une résolution plus faible',
+ 'Output': 'Sortie',
  'Output folder': 'Dossier de sortie',
  'Overwrite existing files (otherwise a number is added)': 'Écraser les fichiers existants (sinon un numéro est '
                                                            'ajouté)',
@@ -772,10 +505,6 @@ T = {'(not visible at this scale)': '(non visible à cette échelle)',
  'Pages': 'Pages',
  'Pages {pages} of {total}': 'Pages {pages} sur {total}',
  'Parallel processes: {n}': 'Processus parallèles : {n}',
- 'Performance analysis failed: {error}': 'Échec de l’analyse des performances : {error}',
- 'Performance analysis finished in {secs} s': 'Analyse des performances terminée en {secs} s',
- 'Performance of “{name}” – {fmt}, {dpi} dpi': 'Performances de « {name} » – {fmt}, {dpi} ppp',
- 'Performance – {name}': 'Performances – {name}',
  'Printed {n} prints in {secs} s.': '{n} impressions réalisées en {secs} s.',
  'Printing error{detail}': 'Erreur d’impression{detail}',
  'Prints': 'Impressions',
@@ -785,82 +514,17 @@ T = {'(not visible at this scale)': '(non visible à cette échelle)',
                                                                                    'journal)',
  'Processes': 'Processus',
  'Processes per layout:': 'Processus par mise en page :',
+ 'Processes:': 'Processus :',
  'Project': 'Projet',
  'Project cache': 'Cache du projet',
  'Project cache: {n} project(s) – layers are fetched once for all prints': 'Cache du projet : {n} projet(s) – les '
                                                                            'couches sont récupérées une seule fois '
                                                                            'pour toutes les impressions',
- 'Project loading': 'Chargement du projet',
- 'Project loading takes {pct}% of the time and every process loads the project again. Remove unused layers, keep “Fast project loading” on and avoid splitting small layouts into many processes.': 'Le '
-                                                                                                                                                                                                    'chargement '
-                                                                                                                                                                                                    'du '
-                                                                                                                                                                                                    'projet '
-                                                                                                                                                                                                    'occupe '
-                                                                                                                                                                                                    '{pct} '
-                                                                                                                                                                                                    '% '
-                                                                                                                                                                                                    'du '
-                                                                                                                                                                                                    'temps '
-                                                                                                                                                                                                    'et '
-                                                                                                                                                                                                    'chaque '
-                                                                                                                                                                                                    'processus '
-                                                                                                                                                                                                    'recharge '
-                                                                                                                                                                                                    'le '
-                                                                                                                                                                                                    'projet. '
-                                                                                                                                                                                                    'Supprimez '
-                                                                                                                                                                                                    'les '
-                                                                                                                                                                                                    'couches '
-                                                                                                                                                                                                    'inutilisées, '
-                                                                                                                                                                                                    'laissez '
-                                                                                                                                                                                                    '« '
-                                                                                                                                                                                                    'Chargement '
-                                                                                                                                                                                                    'rapide '
-                                                                                                                                                                                                    'du '
-                                                                                                                                                                                                    'projet '
-                                                                                                                                                                                                    '» '
-                                                                                                                                                                                                    'activé '
-                                                                                                                                                                                                    'et '
-                                                                                                                                                                                                    'évitez '
-                                                                                                                                                                                                    'de '
-                                                                                                                                                                                                    'répartir '
-                                                                                                                                                                                                    'de '
-                                                                                                                                                                                                    'petites '
-                                                                                                                                                                                                    'mises '
-                                                                                                                                                                                                    'en '
-                                                                                                                                                                                                    'page '
-                                                                                                                                                                                                    'sur '
-                                                                                                                                                                                                    'de '
-                                                                                                                                                                                                    'nombreux '
-                                                                                                                                                                                                    'processus.',
+ 'Project files…': 'Fichiers de projet…',
  'QGIS projects (*.qgz *.qgs)': 'Projets QGIS (*.qgz *.qgs)',
+ 'QHD screen (2560×1440)': 'Écran QHD (2560×1440)',
  'Range of pages (or atlas sheets), e.g. 2-5 or 1,3,7-9. Empty = all.': 'Plage de pages (ou de feuilles d’atlas), p. '
                                                                         'ex. 2-5 ou 1,3,7-9. Vide = toutes.',
- 'Raster “{name}” ({pct}%): build overviews (pyramids) or use a Cloud Optimized GeoTIFF; avoid on-the-fly reprojection of large rasters.': 'Raster '
-                                                                                                                                           '« '
-                                                                                                                                           '{name} '
-                                                                                                                                           '» '
-                                                                                                                                           '({pct} '
-                                                                                                                                           '%) '
-                                                                                                                                           ': '
-                                                                                                                                           'créez '
-                                                                                                                                           'des '
-                                                                                                                                           'pyramides '
-                                                                                                                                           '(overviews) '
-                                                                                                                                           'ou '
-                                                                                                                                           'utilisez '
-                                                                                                                                           'un '
-                                                                                                                                           'Cloud '
-                                                                                                                                           'Optimized '
-                                                                                                                                           'GeoTIFF '
-                                                                                                                                           '; '
-                                                                                                                                           'évitez '
-                                                                                                                                           'la '
-                                                                                                                                           'reprojection '
-                                                                                                                                           'à '
-                                                                                                                                           'la '
-                                                                                                                                           'volée '
-                                                                                                                                           'de '
-                                                                                                                                           'grands '
-                                                                                                                                           'rasters.',
  'Raster:': 'Raster :',
  'Ready to render': 'Prêt pour le rendu',
  'Refresh': 'Actualiser',
@@ -876,6 +540,7 @@ T = {'(not visible at this scale)': '(non visible à cette échelle)',
  'Removes the entries from the list – the files stay on disk': 'Retire les entrées de la liste – les fichiers restent '
                                                                'sur le disque',
  'Render': 'Lancer le rendu',
+ 'Render folder:': 'Dossier de rendu :',
  'Render layouts in parallel…': 'Rendre les mises en page en parallèle…',
  'Rendering': 'Rendu',
  'Rendering continues in the background.': 'Le rendu se poursuit en arrière-plan.',
@@ -912,10 +577,37 @@ T = {'(not visible at this scale)': '(non visible à cette échelle)',
                                                                                                          'lignes '
                                                                                                          'existantes).',
  'Settings…': 'Paramètres…',
- 'Share': 'Part',
  'Show folder': 'Afficher le dossier',
  'Simultaneous renders:': 'Rendus simultanés :',
  'Size': 'Taille',
+ 'Size of the MultiRender window. “Automatic” takes 80% of the screen; the other options suit a given screen resolution and never exceed the screen.': 'Taille '
+                                                                                                                                                       'de '
+                                                                                                                                                       'la '
+                                                                                                                                                       'fenêtre '
+                                                                                                                                                       'MultiRender. '
+                                                                                                                                                       '« '
+                                                                                                                                                       'Automatique '
+                                                                                                                                                       '» '
+                                                                                                                                                       'occupe '
+                                                                                                                                                       '80 '
+                                                                                                                                                       '% '
+                                                                                                                                                       'de '
+                                                                                                                                                       'l’écran '
+                                                                                                                                                       '; '
+                                                                                                                                                       'les '
+                                                                                                                                                       'autres '
+                                                                                                                                                       'options '
+                                                                                                                                                       'conviennent '
+                                                                                                                                                       'à '
+                                                                                                                                                       'une '
+                                                                                                                                                       'résolution '
+                                                                                                                                                       'd’écran '
+                                                                                                                                                       'donnée '
+                                                                                                                                                       'et '
+                                                                                                                                                       'ne '
+                                                                                                                                                       'dépassent '
+                                                                                                                                                       'jamais '
+                                                                                                                                                       'l’écran.',
  'Skip remote layers not used by the printed layouts (faster project loading)': 'Ignorer les couches distantes non '
                                                                                 'utilisées par les mises en page '
                                                                                 'imprimées (chargement plus rapide)',
@@ -992,9 +684,7 @@ T = {'(not visible at this scale)': '(non visible à cette échelle)',
                                                                                                                                                                                                                                                                                                                                                                             'donc '
                                                                                                                                                                                                                                                                                                                                                                             'pas '
                                                                                                                                                                                                                                                                                                                                                                             'concernées.',
- 'Source': 'Source',
  'Split the layout into parallel processes': 'Répartir la mise en page sur des processus parallèles',
- 'Stage': 'Étape',
  'Status': 'État',
  'Stop': 'Arrêter',
  'Stop the job when layers are missing': 'Arrêter la tâche si des couches manquent',
@@ -1119,7 +809,6 @@ T = {'(not visible at this scale)': '(non visible à cette échelle)',
                                                                                                                                                     'conservées.',
  'Tick the layouts to delete (the checkbox next to the name).': 'Cochez les mises en page à supprimer (la case à côté '
                                                                 'du nom).',
- 'Time': 'Temps',
  'Time in the processes: project loading {load}%, rendering {render}% · peak memory per process: {mem}': 'Temps dans '
                                                                                                          'les '
                                                                                                          'processus : '
@@ -1133,7 +822,6 @@ T = {'(not visible at this scale)': '(non visible à cette échelle)',
                                                                                                          'processus : '
                                                                                                          '{mem}',
  'Time of the whole run: project cache + rendering': 'Durée de l’exécution complète : cache du projet + rendu',
- 'Total': 'Total',
  'Unavailable layers: {names}': 'Couches indisponibles : {names}',
  'Unsupported format: {fmt}': 'Format non pris en charge : {fmt}',
  'Update these defaults with the values last chosen in the table': 'Mettre à jour ces valeurs par défaut avec les '
@@ -1144,38 +832,7 @@ T = {'(not visible at this scale)': '(non visible à cette échelle)',
                                                                                              'p. ex. dans un projet '
                                                                                              'nouvellement ouvert.',
  'Waiting for the project cache': 'En attente du cache du projet',
- 'What to improve': 'Que améliorer',
- 'Writing the file': 'Écriture du fichier',
- 'Writing the file takes {pct}% of the time. At high DPI PNG compression is slow – consider TIFF or JPG, a lower DPI or a faster disk.': 'L’écriture '
-                                                                                                                                         'du '
-                                                                                                                                         'fichier '
-                                                                                                                                         'occupe '
-                                                                                                                                         '{pct} '
-                                                                                                                                         '% '
-                                                                                                                                         'du '
-                                                                                                                                         'temps. '
-                                                                                                                                         'À '
-                                                                                                                                         'haute '
-                                                                                                                                         'résolution, '
-                                                                                                                                         'la '
-                                                                                                                                         'compression '
-                                                                                                                                         'PNG '
-                                                                                                                                         'est '
-                                                                                                                                         'lente '
-                                                                                                                                         '– '
-                                                                                                                                         'envisagez '
-                                                                                                                                         'TIFF '
-                                                                                                                                         'ou '
-                                                                                                                                         'JPG, '
-                                                                                                                                         'une '
-                                                                                                                                         'résolution '
-                                                                                                                                         'plus '
-                                                                                                                                         'faible '
-                                                                                                                                         'ou '
-                                                                                                                                         'un '
-                                                                                                                                         'disque '
-                                                                                                                                         'plus '
-                                                                                                                                         'rapide.',
+ 'Window size:': 'Taille de la fenêtre :',
  'Yes': 'Oui',
  'ZIP archive (*.zip)': 'Archive ZIP (*.zip)',
  'ZIP archive created: {name} ({size})': 'Archive ZIP créée : {name} ({size})',
@@ -1184,19 +841,16 @@ T = {'(not visible at this scale)': '(non visible à cette échelle)',
  'all (~{n} sheets)': 'toutes (~{n} feuilles)',
  'analysing the layouts': 'analyse des mises en page',
  'copying layer “{name}”': 'copie de la couche « {name} »',
- 'data {fetch} · drawing {draw} · {n} features': 'données {fetch} · dessin {draw} · {n} entités',
  'detected automatically': 'détecté automatiquement',
  'exit code {code}': 'code de sortie {code}',
  'exporting': 'export',
  'including the project cache: {secs} s': 'dont le cache du projet : {secs} s',
  'loading the project': 'chargement du projet',
- 'measuring': 'mesure',
  'pages {pages}': 'pages {pages}',
  'part {part}/{parts}': 'partie {part}/{parts}',
  'qgis_process crashed': 'qgis_process s’est arrêté brutalement',
  'qgis_process not found.\nSet it in the plugin settings.': 'qgis_process introuvable.\n'
                                                             'Indiquez-le dans les paramètres de l’extension.',
- 'remote': 'distante',
  'saving the project copy': 'enregistrement de la copie du projet',
  'speed-up ×{x}': 'accélération ×{x}',
  'starting qgis_process': 'démarrage de qgis_process',
@@ -1240,60 +894,6 @@ T = {'(not visible at this scale)': '(non visible à cette échelle)',
                                                                                                                             'PNG/JPG/TIFF/BMP)',
  '{n} files': '{n} fichiers',
  '{n} files · {size}': '{n} fichiers · {size}',
- '{n} layers are unavailable in the rendering process ({names}). They are not printed, and waiting for their connections slows down project loading. They usually need a login kept only in the QGIS session; with the project cache on, vector layers of the current project are copied from the session.': '{n} '
-                                                                                                                                                                                                                                                                                                             'couches '
-                                                                                                                                                                                                                                                                                                             'sont '
-                                                                                                                                                                                                                                                                                                             'indisponibles '
-                                                                                                                                                                                                                                                                                                             'dans '
-                                                                                                                                                                                                                                                                                                             'le '
-                                                                                                                                                                                                                                                                                                             'processus '
-                                                                                                                                                                                                                                                                                                             'de '
-                                                                                                                                                                                                                                                                                                             'rendu '
-                                                                                                                                                                                                                                                                                                             '({names}). '
-                                                                                                                                                                                                                                                                                                             'Elles '
-                                                                                                                                                                                                                                                                                                             'ne '
-                                                                                                                                                                                                                                                                                                             'sont '
-                                                                                                                                                                                                                                                                                                             'pas '
-                                                                                                                                                                                                                                                                                                             'imprimées '
-                                                                                                                                                                                                                                                                                                             'et '
-                                                                                                                                                                                                                                                                                                             'l’attente '
-                                                                                                                                                                                                                                                                                                             'de '
-                                                                                                                                                                                                                                                                                                             'leurs '
-                                                                                                                                                                                                                                                                                                             'connexions '
-                                                                                                                                                                                                                                                                                                             'ralentit '
-                                                                                                                                                                                                                                                                                                             'le '
-                                                                                                                                                                                                                                                                                                             'chargement '
-                                                                                                                                                                                                                                                                                                             'du '
-                                                                                                                                                                                                                                                                                                             'projet. '
-                                                                                                                                                                                                                                                                                                             'Elles '
-                                                                                                                                                                                                                                                                                                             'nécessitent '
-                                                                                                                                                                                                                                                                                                             'généralement '
-                                                                                                                                                                                                                                                                                                             'une '
-                                                                                                                                                                                                                                                                                                             'connexion '
-                                                                                                                                                                                                                                                                                                             'conservée '
-                                                                                                                                                                                                                                                                                                             'uniquement '
-                                                                                                                                                                                                                                                                                                             'dans '
-                                                                                                                                                                                                                                                                                                             'la '
-                                                                                                                                                                                                                                                                                                             'session '
-                                                                                                                                                                                                                                                                                                             'QGIS '
-                                                                                                                                                                                                                                                                                                             '; '
-                                                                                                                                                                                                                                                                                                             'avec '
-                                                                                                                                                                                                                                                                                                             'le '
-                                                                                                                                                                                                                                                                                                             'cache '
-                                                                                                                                                                                                                                                                                                             'du '
-                                                                                                                                                                                                                                                                                                             'projet '
-                                                                                                                                                                                                                                                                                                             'activé, '
-                                                                                                                                                                                                                                                                                                             'les '
-                                                                                                                                                                                                                                                                                                             'couches '
-                                                                                                                                                                                                                                                                                                             'vectorielles '
-                                                                                                                                                                                                                                                                                                             'du '
-                                                                                                                                                                                                                                                                                                             'projet '
-                                                                                                                                                                                                                                                                                                             'actuel '
-                                                                                                                                                                                                                                                                                                             'sont '
-                                                                                                                                                                                                                                                                                                             'copiées '
-                                                                                                                                                                                                                                                                                                             'depuis '
-                                                                                                                                                                                                                                                                                                             'la '
-                                                                                                                                                                                                                                                                                                             'session.',
  '{n} remote layers not used by the printed layouts were replaced by empty copies': '{n} couches distantes non '
                                                                                     'utilisées par les mises en page '
                                                                                     'imprimées ont été remplacées par '

@@ -14,9 +14,9 @@ import time
 from contextlib import contextmanager
 from datetime import datetime
 
-from qgis.core import Qgis, QgsApplication, QgsProject
+from qgis.core import Qgis, QgsApplication, QgsPrintLayout, QgsProject
 from qgis.PyQt.QtCore import QRegularExpression, Qt, QTimer, QUrl, pyqtSignal
-from qgis.PyQt.QtGui import QDesktopServices, QFont, QRegularExpressionValidator
+from qgis.PyQt.QtGui import QDesktopServices, QFont, QGuiApplication, QRegularExpressionValidator
 from qgis.PyQt.QtWidgets import (
     QAbstractItemView,
     QCheckBox,
@@ -48,7 +48,6 @@ from .i18n import message, num, tr
 from .live_cache import LiveCache
 from .outputs_panel import OutputsPanel, human_size
 from .perf_analysis import run_summary
-from .profile_report import ProfileReport
 from .project_reader import LayoutInfo, find_projects, is_project_file, read_layouts
 from .qgis_process_locator import find_qgis_process
 from .runner import CANCELED, DONE, FAILED, RUNNING, CacheJob, RenderJob, RenderManager
@@ -210,9 +209,6 @@ class MainDialog(QDialog):
         self._follow_last = S.get("defaults_follow_last")
         self._dirty_rows = set()
         self._connections = []
-        self._profile_row = None
-        self._profile_job = None
-        self._profile_cache_dir = None
         self._cache_jobs = []  # qgis_process cache jobs of this run (other projects)
         self._live = None  # cache of the current project built in this session
         self._cache_pending = 0
@@ -230,14 +226,32 @@ class MainDialog(QDialog):
 
         self.setWindowTitle(tr("MultiRender – parallel map rendering"))
         self.setWindowFlags(self.windowFlags() | Qt.WindowType.WindowMaximizeButtonHint)
-        self.resize(1300, 720)
         self.setAcceptDrops(True)
+        self._window_size = None
+        self._apply_window_size()
         self._build_ui()
         self._connect_project()
         self.sync_current_project()
 
     def is_busy(self):
         return self._phase is not None
+
+    def _apply_window_size(self):
+        """Window size for the screen (Full HD … 4K) from the settings, centred on that screen."""
+        mode = S.get("window_size")
+        if mode == self._window_size:
+            return
+        self._window_size = mode
+        host = self.parentWidget() or self
+        screen = host.screen() if hasattr(host, "screen") else None
+        screen = screen or QGuiApplication.primaryScreen()
+        if screen is None:
+            self.resize(1300, 720)
+            return
+        area = screen.availableGeometry()
+        w, h = S.window_size(area.width(), area.height(), mode)
+        self.resize(w, h)
+        self.move(area.x() + (area.width() - w) // 2, area.y() + (area.height() - h) // 2)
 
     # ============================================== sync with the project
     def _connect_project(self):
@@ -357,34 +371,37 @@ class MainDialog(QDialog):
         self.toolbar_w = QWidget()
         bar = QHBoxLayout(self.toolbar_w)
         bar.setContentsMargins(0, 0, 0, 0)
-        self.btn_refresh = self._button(tr("Refresh"), self.sync_current_project, "/mActionRefresh.svg",
-                                        tr("Reload the list from the Layout Manager"))
-        self.btn_manager = self._button(tr("Layout Manager"), self.open_layout_manager, "/mActionLayoutManager.svg")
-        self.btn_edit = self._button(tr("Editor"), self.open_designer_selected, "/mActionEditNodesItem.svg",
-                                     tr("Open the selected layout in the layout designer (or double-click its name)"))
+        self.btn_new = self._button(tr("Add layout"), self.add_layout, "/mActionNewLayout.svg",
+                                    tr("Create a new, empty print layout in the Layout Manager"))
         self.btn_copy = self._button(tr("Copy layout"), self.copy_layout_selected, "/mActionEditCopy.svg",
                                      tr("Create a copy of the layout in the project (as in the Layout Manager)"))
-        self.btn_profile = self._button(tr("Analyze performance"), self.profile_selected, "/mActionStatisticalSummary.svg",
-                                        tr("Measure where the rendering of the selected layout spends its time"))
-        self.btn_all = self._button(tr("Select all"), lambda: self._check_all(True))
-        self.btn_none = self._button(tr("Select none"), lambda: self._check_all(False))
         self.btn_dup = self._button(tr("Duplicate"), self.duplicate_selected, "/mActionDuplicateLayer.svg",
                                     tr("Copy the selected rows – e.g. the same map in another format"))
+        self.btn_all = self._button(tr("Select all"), lambda: self._check_all(True))
+        self.btn_none = self._button(tr("Select none"), lambda: self._check_all(False))
+        self.btn_edit = self._button(tr("Editor"), self.open_designer_selected, "/mActionEditNodesItem.svg",
+                                     tr("Open the selected layout in the layout designer (or double-click its name)"))
         self.btn_remove = self._button(tr("Remove"), self.remove_selected, "/mActionRemove.svg",
                                        tr("Delete the ticked layouts (the checkbox next to the name) from the Layout "
                                           "Manager of the current project. Rows of other projects are only removed "
                                           "from the list."))
-        self.btn_add = self._button(tr("Other projects…"), self.add_projects_dialog, "/mActionFileOpen.svg",
-                                    tr("Add layouts from other .qgs/.qgz files"))
-        self.btn_add_dir = self._button(tr("From folder…"), self.add_folder_dialog, "/mActionNewFolder.svg")
+        self.btn_refresh = self._button(tr("Refresh"), self.sync_current_project, "/mActionRefresh.svg",
+                                        tr("Reload the list from the Layout Manager"))
+        self.btn_add = self._button(tr("Other projects"), self.add_projects_dialog, "/mActionFileOpen.svg",
+                                    tr("Add layouts from other .qgs/.qgz files (arrow: from a whole folder)"))
+        other_menu = QMenu(self.btn_add)
+        other_menu.addAction(icon("/mActionFileOpen.svg"), tr("Project files…"), self.add_projects_dialog)
+        other_menu.addAction(icon("/mActionNewFolder.svg"), tr("From folder…"), self.add_folder_dialog)
+        self.btn_add.setMenu(other_menu)
+        self.btn_add.setPopupMode(QToolButton.ToolButtonPopupMode.MenuButtonPopup)
         self.btn_load = self._button(tr("Load list…"), self.load_list, "/mActionFileOpen.svg")
         self.btn_save = self._button(tr("Save list…"), self.save_list, "/mActionFileSave.svg")
         self.btn_settings = self._button(tr("Settings…"), self.open_settings, "/mActionOptions.svg")
-        for w in (self.btn_refresh, self.btn_manager, self.btn_edit, self.btn_copy, self.btn_profile, self.btn_all,
-                  self.btn_none, self.btn_dup, self.btn_remove):
+        for w in (self.btn_new, self.btn_copy, self.btn_dup, self.btn_all, self.btn_none, self.btn_edit,
+                  self.btn_remove, self.btn_refresh):
             bar.addWidget(w)
         bar.addStretch(1)
-        for w in (self.btn_add, self.btn_add_dir, self.btn_load, self.btn_save, self.btn_settings):
+        for w in (self.btn_add, self.btn_load, self.btn_save, self.btn_settings):
             bar.addWidget(w)
         root.addWidget(self.toolbar_w)
 
@@ -486,7 +503,7 @@ class MainDialog(QDialog):
         # the number of parallel processes is shown only – it is changed in the settings
         self.parallel_label = QLabel()
         self.parallel_label.setToolTip(tr("Number of processes running at the same time – change it in "
-                                          "Settings → General."))
+                                          "Settings → Advanced."))
         self._show_parallel()
         bottom.addWidget(self.parallel_label)
         self.remember = QCheckBox(tr("Remember settings"))
@@ -738,13 +755,8 @@ class MainDialog(QDialog):
             one = len(sel) == 1
             self.btn_edit.setEnabled(one)
             self.btn_copy.setEnabled(one and sel[0].is_current)
-            self.btn_profile.setEnabled(one)
 
     # ========================================================= list actions
-    def open_layout_manager(self):
-        if self.iface is not None:
-            self.iface.showLayoutManager()
-
     def _check_all(self, state):
         state = Qt.CheckState.Checked if state else Qt.CheckState.Unchecked
         with self._batch_updates():
@@ -967,7 +979,6 @@ class MainDialog(QDialog):
                        lambda: self.open_designer(row))
         act = menu.addAction(icon("/mActionEditCopy.svg"), tr("Copy layout…"), lambda: self.copy_layout(row))
         act.setEnabled(row.is_current)
-        menu.addAction(icon("/mActionStatisticalSummary.svg"), tr("Analyze performance"), lambda: self.profile(row))
         menu.addSeparator()
         menu.addAction(tr("Duplicate row (other format/DPI)"), self.duplicate_selected)
         menu.addAction(icon("/mActionRemove.svg"),
@@ -1030,6 +1041,33 @@ class MainDialog(QDialog):
             self.sync_current_project()
             return
         self.iface.openLayoutDesigner(layout)
+
+    def add_layout(self):
+        """New, empty print layout in the current project (as “Create” in the Layout Manager)."""
+        title = tr("Add layout")
+        project = QgsProject.instance()
+        lm = project.layoutManager()
+        try:
+            proposal = lm.generateUniqueTitle()
+        except (AttributeError, TypeError):
+            proposal = copy_name(tr("Layout"), {lay.name() for lay in lm.layouts()})
+        name, ok = ui.text_input(self, title, tr("Name of the new layout:"), proposal)
+        name = name.strip()
+        if not ok or not name:
+            return
+        if lm.layoutByName(name) is not None:
+            ui.warn(self, title, tr("Layout “{name}” already exists.", name=name))
+            return
+        layout = QgsPrintLayout(project)
+        layout.initializeDefaults()  # one A4 page, as in QGIS
+        layout.setName(name)
+        if not lm.addLayout(layout):
+            ui.warn(self, title, tr("Creating the layout failed."))
+            return
+        self.log(tr("Created layout “{name}” (save the project to keep it)", name=name))
+        self.sync_current_project()
+        if self.iface is not None and S.get("open_new_layout"):
+            self.iface.openLayoutDesigner(layout)
 
     def copy_layout(self, row):
         """Copy of a layout in the current project; the new row inherits the settings."""
@@ -1179,10 +1217,11 @@ class MainDialog(QDialog):
         parts = row.parts_spin.value()
         spec = row.pages_edit.text().strip()
         name = row.layout.name
-        if not atlas and fmt in ("pdf", "svg"):
+        if not atlas and fmt in S.PDF_FORMATS + ("svg",):
             if parts > 1 or spec:
                 self.log("ℹ " + tr("{name}: {fmt} without an atlas is exported as a whole (splitting and page "
-                                   "ranges work for atlases and PNG/JPG/TIFF/BMP)", name=name, fmt=fmt.upper()))
+                                   "ranges work for atlases and PNG/JPG/TIFF/BMP)", name=name,
+                                   fmt=S.FORMAT_LABEL.get(fmt, fmt.upper())))
             return 1, ""
         known = row.layout.features if atlas else row.layout.pages
         if known > 0:
@@ -1194,7 +1233,7 @@ class MainDialog(QDialog):
             parts = min(parts, count)
         if not atlas and row.layout.pages == 1:
             parts = 1
-        if atlas and fmt == "pdf" and S.get("atlas_single_pdf") and (parts > 1 or spec):
+        if atlas and fmt in S.PDF_FORMATS and S.get("atlas_single_pdf") and (parts > 1 or spec):
             self.log("ℹ " + tr("{name}: atlas split into parts – one PDF per sheet instead of a single PDF",
                                name=name))
         return parts, spec
@@ -1305,101 +1344,6 @@ class MainDialog(QDialog):
             self._live.start()
         if self._cache_jobs:
             self.manager.start(self._cache_jobs, qp, self._parallel())
-
-    # ---------------------------------------------------- performance analysis
-    def profile_selected(self):
-        row = self._one_selected()
-        if row:
-            self.profile(row)
-
-    def profile(self, row):
-        """Measures one layout (first atlas sheet) without exporting anything."""
-        if self.is_busy():
-            return
-        qp = self._qgis_process()
-        if not qp:
-            ui.warn(self, "qgis_process", tr("qgis_process not found.\nSet it in the plugin settings."))
-            return
-        project_path = row.project_path
-        if row.is_current:
-            project_path = self._current_project_file()
-            if not project_path:
-                return
-            self._update_project_labels()
-        fmt = row.format_combo.currentData()
-        atlas = row.atlas_check.isChecked() and row.layout.atlas
-        base = os.path.join(cache_root(), "profile", safe_name(row.layout.name))
-        job = RenderJob(project_path, row.layout.name, fmt, row.dpi_spin.value(), atlas, base, S.export_options(),
-                        self._render_script, mode="profile")
-        self._profile_row, self._profile_job = row, job
-        self._qp = qp
-        self._run_started = time.time()
-        self._start_clock()
-        self.total.setValue(0)
-        self._phase = "profile"
-        self._update_buttons()
-        self.log("▶ " + tr("Analyzing the performance of “{name}” ({fmt}, {dpi} dpi)…",
-                           name=row.layout.name, fmt=fmt.upper(), dpi=job.dpi))
-        # measure what a real run renders: the current project through the session cache
-        options = S.cache_options()
-        if row.is_current and options["cache_mode"] != "off":
-            cache_dir = os.path.join(cache_root(), "profile_" + hashlib.sha1(project_path.encode()).hexdigest()[:12])
-            shutil.rmtree(cache_dir, ignore_errors=True)
-            live = LiveCache(project_path, os.path.join(cache_dir, os.path.basename(project_path)),
-                             [row.layout.name], options, self)
-            if live.prepare():
-                self._live, self._profile_cache_dir = live, cache_dir
-                live.progress.connect(lambda _v: self._update_total())
-                live.finished.connect(lambda _ok: QTimer.singleShot(0, self._profile_after_cache))
-                live.start()
-                return
-        self.manager.start([job], qp, 1)
-
-    def _profile_after_cache(self):
-        live, self._live = self._live, None
-        job = self._profile_job
-        if live is None or job is None:
-            return
-        res = live.result
-        if res.get("canceled"):
-            job.status = CANCELED
-            self._finish_profile()
-            return
-        if "error" in res:
-            self.log("⚠ " + tr("{label}: {error} – rendering from the original project", label=live.label,
-                               error=res["error"]))
-        else:
-            job.project_path = live.cache_project
-            job.cache_seconds = live.duration
-        self.manager.start([job], self._qp, 1)
-
-    def _finish_profile(self):
-        self._stop_clock()
-        self._phase = None
-        self._update_buttons()
-        self._update_total()
-        if self._sync_pending:  # the Layout Manager changed while measuring
-            self._sync_pending = False
-            self._sync_timer.start()
-        job, self._profile_job = self._profile_job, None
-        row, self._profile_row = self._profile_row, None
-        if self._profile_cache_dir:
-            shutil.rmtree(self._profile_cache_dir, ignore_errors=True)
-            self._profile_cache_dir = None
-        if job is None or job.status != DONE or not job.result.get("profile"):
-            if job is not None and job.status == FAILED:
-                self.log("✗ " + tr("Performance analysis failed: {error}", error=job.error))
-                ui.warn(self, tr("Analyze performance"),
-                                    tr("Performance analysis failed: {error}", error=job.error))
-            return
-        self.log("✓ " + tr("Performance analysis finished in {secs} s", secs=num(job.duration)))
-        profile = dict(job.result["profile"], cache_seconds=getattr(job, "cache_seconds", 0.0))
-        report = ProfileReport(job.layout, profile, job.fmt, job.dpi, self._parallel(),
-                               S.get("cache_mode") != "off", self)
-        report.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
-        report.show()
-        if row is not None and row in self.rows:
-            self.table.selectRow(self.rows.index(row))
 
     # ------------------------------------------------------------ cache
     def _build_cache_jobs(self, jobs):
@@ -1581,7 +1525,7 @@ class MainDialog(QDialog):
             return
         value = sum(values) / total
         self.total.setValue(int(value * 10))
-        phase = {"cache": tr("Cache"), "profile": tr("Analysis")}.get(self._phase, tr("Prints"))
+        phase = tr("Cache") if self._phase == "cache" else tr("Prints")
         self.total.setFormat(f"{phase}: {finished}/{total} · {value:.0f}%")
 
     def _on_job_started(self, job):
@@ -1618,9 +1562,6 @@ class MainDialog(QDialog):
         if self._phase == "cache":
             # the signal comes from inside the manager – continue after returning
             QTimer.singleShot(0, self._cache_part_done)
-            return
-        if self._phase == "profile":
-            QTimer.singleShot(0, self._finish_profile)
             return
         self._finish_run()
 
@@ -1737,6 +1678,7 @@ class MainDialog(QDialog):
         self.remember.blockSignals(False)
         self._show_parallel()
         self.manager.set_max_parallel(self._parallel())
+        self._apply_window_size()
 
     def closeEvent(self, event):  # noqa: N802
         self._save_rows_memory()

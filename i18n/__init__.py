@@ -91,7 +91,6 @@ MESSAGES = {
     "stage_copy": "copying layer “{name}”",
     "stage_save": "saving the project copy",
     "stage_export": "exporting",
-    "stage_profile": "measuring",
 }
 
 

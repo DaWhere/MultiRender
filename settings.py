@@ -14,12 +14,36 @@ FORMATS = [
     ("tif", "TIFF / GeoTIFF", ".tif"),
     ("bmp", "BMP", ".bmp"),
     ("pdf", "PDF", ".pdf"),
+    ("pdf_raster", "PDF (PNG)", ".pdf"),  # the whole page as one lossless image – nothing to select
     ("svg", "SVG", ".svg"),
 ]
 FORMAT_EXT = {f[0]: f[2] for f in FORMATS}
+FORMAT_LABEL = {f[0]: f[1] for f in FORMATS}
+PDF_FORMATS = ("pdf", "pdf_raster")
 
 
 MAX_PARALLEL = 10  # upper limit of processes running at the same time (and of parts per layout)
+
+
+# size of the main window for screens from Full HD to 4K (logical pixels, before clamping to the screen)
+WINDOW_SIZES = {
+    "1080p": (1400, 800),
+    "1440p": (1900, 1080),
+    "2160p": (2800, 1600),
+}
+AUTO_SCREEN_SHARE = 0.8  # "auto": this share of the free screen area
+
+
+def window_size(available_width, available_height, mode=None):
+    """(width, height) of the main window for the chosen mode, never larger than 95% of the screen."""
+    mode = mode or get("window_size")
+    if mode in WINDOW_SIZES:
+        w, h = WINDOW_SIZES[mode]
+    else:
+        w, h = available_width * AUTO_SCREEN_SHARE, available_height * AUTO_SCREEN_SHARE
+    w = min(w, available_width * 0.95)
+    h = min(h, available_height * 0.95)
+    return max(900, int(w)), max(560, int(h))
 
 
 def default_parallel():
@@ -30,6 +54,7 @@ def default_parallel():
 DEFAULTS = {
     # general
     "language": "en",
+    "window_size": "auto",  # "auto" | "1080p" | "1440p" | "2160p"
     "max_parallel": default_parallel(),
     "output_dir": os.path.join(os.path.expanduser("~"), "QGIS_render"),
     "remember": True,  # remember the settings of each layout
@@ -39,6 +64,7 @@ DEFAULTS = {
     "use_atlas": True,
     "parts": 1,  # processes per layout
     "defaults_follow_last": True,  # values chosen in the table become the new defaults
+    "open_new_layout": True,  # “Add layout” opens the new layout in the layout designer
     # file names
     "naming": "layout",  # "layout" (Layout, Layout_1…) | "template"
     "filename_template": "{project}_{layout}",
